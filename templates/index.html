@@ -4,7 +4,7 @@
     <h1>Hi, {{ current_user.username }}</h1>
     {% if form %}
     <form action="" method="post">
-        {{ form.hidden_tag }}
+        {{ form.hidden_tag() }}
         <p>
             {{ form.post.label }}
             {{ form.post(cols=32, rows=4 )}}
@@ -16,9 +16,14 @@
     </form>
     {% endif %}
     {% for post in posts %}
-    
-            <p><b>{% include '_post.html' %}</b></p>
-
+    <p><b>{% include '_post.html' %}</b></p>
     {% endfor %}
+    <!-- pagination -->
+    {% if prev_url %}
+    <a href="{{ prev_url }}"> &gt; &gt; Newer posts</a>
+    {% endif %}
+    {% if next_url %}
+    <a href="{{ next_url }}">&lt; &lt; Older posts</a>
+    {% endif %}
 
 {% endblock %}
