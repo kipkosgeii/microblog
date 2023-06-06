@@ -18,6 +18,7 @@ login.login_view= 'login'
 # Flask-migrate initialization objects that represent migration egine
 db = SQLAlchemy(app)
 migrate = Migrate(app, db, render_as_batch=True)
+from app import routes, models, errors
 
 if not app.debug:
     if app.config['MAIL_SERVER']:
@@ -51,4 +52,3 @@ if not app.debug:
 
         app.logger.setLevel(logging.INFO)
         app.logger.info('Microblog startup')
-from app import routes, models, errors
