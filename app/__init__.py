@@ -7,6 +7,7 @@ from flask_migrate import Migrate
 import logging
 from logging.handlers import SMTPHandler, RotatingFileHandler 
 import os
+from flask_mail import Mail
 
 app = Flask(__name__,template_folder='../templates')
 app.config.from_object(Config)
@@ -14,6 +15,7 @@ app.config.from_object(Config)
 # flask_login
 login = LoginManager(app)
 login.login_view= 'login'
+mail = Mail(app)
 
 # Flask-migrate initialization objects that represent migration egine
 db = SQLAlchemy(app)
