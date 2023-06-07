@@ -10,7 +10,8 @@ from werkzeug.urls import url_parse
 from app import db
 from app.forms import RegistrationForm
 from datetime import datetime
-from app.forms import EmptyForm, PostForm
+from app.forms import EmptyForm, PostForm, ResetPasswordRequestForm
+from app.email import send_password_reset_email
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index',methods=['GET', 'POST'])
@@ -105,7 +106,7 @@ def edit_profile():
         current_user.username = form.username.data
         current_user.about_me = form.about_me.data
         db.session.commit()
-        flash('Ypur changes have been saved.')
+        flash('Your changes have been saved.')
         return redirect(url_for('edit_profile'))
     elif request.method == 'GET':
         form.username.data = current_user.username
@@ -165,3 +166,18 @@ def explore():
     prev_url = url_for('explore', page=posts.prev_num) \
         if posts.has_prev else None
     return render_template('index.html', title='explore', posts=posts.items, next_url=next_url, prev_url=prev_url)
+
+# reset password request
+@app.route('/reset_password_request', methods=['GET', 'POST'])
+def reset_password_request():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    
+    form = ResetPasswordRequestForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user:
+            send_password_reset_email(user)
+        flash('Check your email for the instruction to reset your password')
+        return redirect(url_for('login'))
+    return render_template('reset_password_request.html', title="Reset Password", form=form)
