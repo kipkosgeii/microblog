@@ -11,7 +11,7 @@ from app import db
 from datetime import datetime
 from app.email import send_password_reset_email
 from flask_babel import _ 
-from flask_babel import lazy_gettext as _l
+
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index',methods=['GET', 'POST'])
@@ -106,7 +106,7 @@ def edit_profile():
         current_user.username = form.username.data
         current_user.about_me = form.about_me.data
         db.session.commit()
-        flash('Your changes have been saved.')
+        flash(_('Your changes have been saved.'))
         return redirect(url_for('edit_profile'))
     elif request.method == 'GET':
         form.username.data = current_user.username
@@ -122,15 +122,15 @@ def follow(username):
     if form.validate_on_submit():
         user = User.query.filter_by(username=username).first()
         if user is None:
-            flash('User {} not found.'.format(username))
+            flash(_('User %(username) not found.', username=username))
             return redirect(url_for('index'))
         
         if user == current_user:
-            flash('You cannot follow yourself!')
+            flash(_('You cannot follow yourself!'))
             return redirect(url_for('user', username=username))
         current_user.follow(user)
         db.session.commit()
-        flash('You are following {}!'.format(username))
+        flash(_('You are following %(username)s!', username=username))
         return redirect(url_for('user', username=username))
     else:
         return redirect(url_for('index'))
@@ -145,11 +145,11 @@ def unfollow(username):
             flash('User {} not found.'.format(username))
             return redirect(url_for('index'))
         if user == current_user:
-            flash('You cannot unfollow yourself')
+            flash(_('You cannot unfollow yourself'))
             return redirect(url_for('user', username=username))
         current_user.unfollow(user)
         db.session.commit()
-        flash('You are not following {}.'.format(username))
+        flash(_('You are not following %(username)s.', username=username))
         return redirect(url_for('user', username=username))
     else:
         return redirect(url_for('index'))
@@ -180,7 +180,7 @@ def reset_password_request():
 
         if user:
             send_password_reset_email(user)
-        flash('Check your email for the instruction to reset your password')
+        flash(_('Check your email for the instruction to reset your password'))
         return redirect(url_for('login'))
     return render_template('reset_password_request.html', title="Reset Password", form=form)
 
@@ -197,6 +197,6 @@ def reset_password(token):
     if form.validate_on_submit():
         user.set_password(form.password.data)
         db.session.commit()
-        flash('Your password has been reset')
+        flash(_('Your password has been reset'))
         return redirect(url_for('login'))
     return render_template('reset_password.html',form=form)
