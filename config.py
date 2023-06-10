@@ -17,3 +17,6 @@ class Config(object):
 
     # pagination
     POSTS_PER_PAGE = 25
+
+    # language
+    LANGUAGES = ['en', 'es']
