@@ -1,4 +1,4 @@
-from flask import render_template, flash , redirect, url_for
+from flask import render_template, flash , redirect, url_for, g
 from app import app
 from app.forms import RegistrationForm, LoginForm, EditProfileForm, EmptyForm, PostForm, ResetPasswordRequestForm,ResetPasswordForm
 from flask_login import current_user, login_user
@@ -10,7 +10,7 @@ from werkzeug.urls import url_parse
 from app import db
 from datetime import datetime
 from app.email import send_password_reset_email
-from flask_babel import _ 
+from flask_babel import _ , get_locale
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -96,7 +96,7 @@ def before_request():
     if current_user.is_authenticated:
         current_user.last_seen = datetime.utcnow()
         db.session.commit()
-
+    g.locale = str(get_locale())
 
 @app.route('/edit_profile', methods=['GET', 'POST'])
 @login_required
